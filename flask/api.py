@@ -4,20 +4,20 @@ from models import db, User
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
-@api.route('/users', methods=['GET'])
+@api.route('/login', methods=['POST'])
 def list_user():
-    # クエリーパラメータ取得 request.args.get
-    # 第一引数:パラメータ名、default=で初期値、type=で変換する型を指定できる
-    q_limit = request.args.get('limit', default=-1, type=int)
-    q_offset = request.args.get('offset', default=0, type=int)
+    print(request)
+    payload = request.json
+    userId = payload.get('user_id')
+    passwd = payload.get('password')
+    print("userId:" + userId + ", password:" + passwd)
 
-    if q_limit == -1:
-        # DBから全件取得
-        users = User.query.all()
-    else:
-        # DBからoffset, limitを使用して取得
-        users = User.query.offset(q_offset).limit(q_limit)
-
+    user = User.query.filter_by(user_id=userId, password=passwd).first()
+    # user = User.query.all()
+    print("user")
     # jsonレスポンス返却
     # jsonifyにdict型オブジェクトを設定するとjsonデータのレスポンスが生成される
-    return jsonify({'users': [user.to_dict() for user in users]})
+    if not user:
+        abort(401, {'code': 'UnAuthrized', 'message': 'ログインIDまたはパスワードが正しくありません。'})
+
+    return jsonify(user.to_dict), 200
