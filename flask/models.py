@@ -57,16 +57,15 @@ class Game(db.Model):
     type = db.Column(db.String(20), nullable=True)
     create_date = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, game_id, name, type):
+    def __init__(self, game_id, title, type):
         self.game_id = game_id
-        self.name = name
+        self.title = title
         self.type = type
 
     def to_dict(self):
         return {
             'id': self.id,
-            'game_id': self.game_id,
-            'name': self.name,
+            'title': self.title,
             'type':  self.type
         }
 
@@ -205,4 +204,36 @@ class MatchDetail(db.Model):
             'rank_point':  self.rank_point,
             'memo':  self.memo,
             'create_date':  self.create_date
+        }
+
+class UsefulInfo(db.Model):
+    # テーブル名
+    __tablename__ = 'useful_info'
+
+    # カラム情報
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
+    title = db.Column(db.String(20), nullable=False)
+    contents = db.Column(db.String(500), nullable=True)
+    create_date = db.Column(db.DateTime, nullable=False)
+    update_date = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, user_id, game_id, title, contents, create_date, update_date):
+        self.user_id = user_id
+        self.game_id = game_id
+        self.title = title
+        self.contents = contents
+        self.create_date = create_date
+        self.update_date = update_date
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'game_id': self.game_id,
+            'title': self.title,
+            'contents':  self.contents,
+            'create_date':  self.create_date,
+            'update_date':  self.update_date
         }

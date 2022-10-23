@@ -14,6 +14,6 @@
   * `/flask/sql`配下のSQLを実行する
 
 ## アプリケーション起動
-* pip install：`pip install -r requirements.txt`
+* pip install：`pip install -r requirments.txt`
 * 起動：`python run.py`
 

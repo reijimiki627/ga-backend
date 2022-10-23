@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS gadb.match_detail;
 DROP TABLE IF EXISTS gadb.match;
 DROP TABLE IF EXISTS gadb.charactor;
 DROP TABLE IF EXISTS gadb.weapon;
+DROP TABLE IF EXISTS gadb.useful_info;
 DROP TABLE IF EXISTS gadb.game;
 DROP TABLE IF EXISTS gadb.user;
 
@@ -89,3 +90,16 @@ FOREIGN KEY fk_match_id(`match_id`) REFERENCES gadb.match(`id`),
 FOREIGN KEY fk_team_charactor_id(`charactor_id`) REFERENCES gadb.charactor(`id`),
 FOREIGN KEY fk_team_weapon_id_1(`weapon_main_id`) REFERENCES gadb.weapon(`id`),
 FOREIGN KEY fk_team_weapon_id_2(`weapon_sub_id`) REFERENCES gadb.weapon(`id`));
+
+-- useful_info
+CREATE TABLE IF NOT EXISTS gadb.useful_info
+(`id` INT NOT NULL AUTO_INCREMENT,
+`user_id` INT NOT NULL,
+`game_id` INT NOT NULL,
+`title` VARCHAR(20) NOT NULL,
+`contents` VARCHAR(500) DEFAULT NULL,
+`create_date` DATETIME NOT NULL,
+`update_date` DATETIME NOT NULL,
+PRIMARY KEY ( `id` ),
+FOREIGN KEY fk_user_id(`user_id`) REFERENCES gadb.user(`id`),
+FOREIGN KEY fk_game_id(`game_id`) REFERENCES gadb.game(`id`));
