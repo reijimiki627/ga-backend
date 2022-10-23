@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, request, abort, jsonify
 
-from models import db, User, Weapon, Game, Match, Team, MatchDetail
+from models import db, User, Weapon, Game, Match, Team, MatchDetail, UsefulInfo
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -57,6 +57,46 @@ def get_match_list():
             "match_date": format(data.Match.match_date, "%Y-%m-%d %H:%M:%S"),
             "result": data.Match.result
         } for data in datas]})
+
+@api.route('/useful_info/list', methods=['GET'])
+def get_useful_list():
+    datas = db.session.query(UsefulInfo, User, Game).filter(UsefulInfo.user_id == User.id, UsefulInfo.game_id == Game.id).all()
+    return jsonify({'useful_info': [{
+        'useful_info_id': data.UsefulInfo.id,
+        'user_name': data.User.user_id,
+        'game_title': data.Game.title,
+        'title': data.UsefulInfo.title,
+        'create_date': data.UsefulInfo.create_date,
+        'update_date': data.UsefulInfo.update_date,
+    } for data in datas]}), 200
+
+@api.route('/useful_info/detail', methods=['GET'])
+def get_useful_detail():
+    p_id = request.args.get('id', default=-1, type=int)
+    datas = db.session.query(UsefulInfo, User, Game).filter(UsefulInfo.user_id == User.id, UsefulInfo.game_id == Game.id).filter_by(id=p_id)
+    return jsonify({'useful_info': [{
+        'useful_info_id': data.UsefulInfo.id,
+        'user_name': data.User.user_id,
+        'game_title': data.Game.title,
+        'title': data.UsefulInfo.title,
+        'contents': data.UsefulInfo.contents,
+        'create_date': data.UsefulInfo.create_date,
+        'update_date': data.UsefulInfo.update_date,
+    } for data in datas]}), 200
+
+@api.route('/useful_info', methods=['POST'])
+def post_useful_info():
+    payload = request.json
+    p_user_id = payload.get('user_id')
+    p_game_id = payload.get('game_id')
+    p_title = payload.get('title')
+    p_contents = payload.get('contents')
+
+    useful_info = UsefulInfo(p_user_id, p_game_id, p_title, p_contents, datetime.now(), datetime.now())
+    db.session.add(useful_info)
+    db.session.commit()
+
+    return jsonify(), 200
 
 @api.route('/match', methods=['POST'])
 def post_match():

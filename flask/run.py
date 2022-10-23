@@ -1,10 +1,12 @@
 from flask import Flask, render_template, jsonify
 from models import db
+from flask_cors import CORS
 
 from api import api
 
 # Flask本体
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000/*"}})
 
 # ファイルから設定を読み込む
 app.config.from_pyfile('conf.cfg')
