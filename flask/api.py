@@ -77,6 +77,7 @@ def get_useful_detail():
     return jsonify({'useful_info': [{
         'useful_info_id': data.UsefulInfo.id,
         'user_name': data.User.user_id,
+        'game_id': data.Game.id,
         'game_title': data.Game.title,
         'title': data.UsefulInfo.title,
         'contents': data.UsefulInfo.contents,
@@ -94,6 +95,29 @@ def post_useful_info():
 
     useful_info = UsefulInfo(p_user_id, p_game_id, p_title, p_contents, datetime.now(), datetime.now())
     db.session.add(useful_info)
+    db.session.commit()
+
+    return jsonify(), 200
+
+@api.route('/useful_info', methods=['PUT'])
+def update_useful_info():
+    payload = request.json
+    p_id = payload.get('id')
+    # p_user_id = 1
+    # p_game_id = payload.get('game_id')
+    p_title = payload.get('title')
+    p_contents = payload.get('contents')
+
+    useful_info = db.session.query(UsefulInfo).filter_by(id=p_id).first()
+
+    print(useful_info.title)
+
+    useful_info.title = p_title
+    useful_info.contents = p_contents
+    useful_info.update_date = datetime.now()
+
+    print(useful_info.title)
+
     db.session.commit()
 
     return jsonify(), 200
